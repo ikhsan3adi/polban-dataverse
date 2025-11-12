@@ -1,0 +1,9 @@
+[submodule "services/polban-datacore"]
+	path = services/polban-datacore
+	url = https://github.com/muhamadSyahid/polban-datacore
+[submodule "services/polban-datahub"]
+	path = services/polban-datahub
+	url = https://github.com/ErsyaHasby/polban-datahub
+[submodule "services/polban-dataview"]
+	path = services/polban-dataview
+	url = https://github.com/ihsan-ramadhan/polban-dataview
