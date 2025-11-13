@@ -1,0 +1,127 @@
+networks:
+  dataverse-net:
+    driver: bridge
+
+volumes:
+  datacore_pg_data:
+  datahub_pg_data:
+
+services:
+  # DATABASES
+  datacore_pg:
+    container_name: datacore_pg
+    image: postgres:18
+    volumes:
+      - datacore_pg_data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${DATACORE_DB_USER}
+      POSTGRES_PASSWORD: ${DATACORE_DB_PASSWORD}
+      POSTGRES_DB: ${DATACORE_DB_NAME}
+    ports:
+      - 5437:5432
+    networks:
+      - dataverse-net
+    restart: always
+
+  datahub_pg:
+    container_name: datahub_pg
+    image: postgres:18
+    volumes:
+      - datahub_pg_data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${DATAHUB_DB_USER}
+      POSTGRES_PASSWORD: ${DATAHUB_DB_PASSWORD}
+      POSTGRES_DB: ${DATAHUB_DB_NAME}
+    ports:
+      - 5438:5432
+    networks:
+      - dataverse-net
+    restart: always
+
+  datacore_redis:
+    container_name: datacore_redis
+    image: redis:8
+    ports:
+      - 6369:6379
+    networks:
+      - dataverse-net
+    restart: always
+
+  # MAIN SERVICES
+  datacore:
+    container_name: datacore
+    build:
+      context: ./configs/polban-datacore
+      dockerfile: Dockerfile
+      args:
+        WORKDIR: ./services/polban-datacore/backend
+    depends_on:
+      - datacore_pg
+      - datacore_redis
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      DATABASE_URL: postgresql://${DATACORE_DB_USER}:${DATACORE_DB_PASSWORD}@datacore_pg:5432/${DATACORE_DB_NAME}?schema=public
+      REDIS_HOST: datacore_redis
+      REDIS_PORT: 6379
+      DATAHUB_API_URL: datahub
+      DATAHUB_API_PORT: 80
+    ports:
+      - 3000:3000
+    networks:
+      - dataverse-net
+    restart: always
+
+  datacore_web:
+    container_name: datacore_web
+    build:
+      context: ./configs/polban-datacore-web
+      dockerfile: Dockerfile
+      args:
+        WORKDIR: ./services/polban-datacore/frontend
+    depends_on:
+      - datacore
+    # TODO: Add environment variables for datacore_web
+    ports:
+      - 3001:80
+    networks:
+      - dataverse-net
+    restart: always
+
+  datahub:
+    container_name: datahub
+    build:
+      context: ./configs/polban-datahub
+      dockerfile: Dockerfile
+      args:
+        WORKDIR: ./services/polban-datahub/datahub-backend
+    depends_on:
+      - datahub_pg
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: datahub_pg
+      DB_PORT: 5432
+      DB_DATABASE: ${DATAHUB_DB_NAME}
+      DB_USERNAME: ${DATAHUB_DB_USER}
+      DB_PASSWORD: ${DATAHUB_DB_PASSWORD}
+    ports:
+      - 3002:80
+    networks:
+      - dataverse-net
+    restart: always
+
+  dataview:
+    container_name: dataview
+    build:
+      context: ./configs/polban-dataview
+      dockerfile: Dockerfile
+      args:
+        WORKDIR: ./services/polban-dataview/laravel-vue
+    depends_on:
+      - datacore
+    # TODO: Add environment variables for dataview
+    ports:
+      - 3003:80
+    networks:
+      - dataverse-net
+    restart: always
