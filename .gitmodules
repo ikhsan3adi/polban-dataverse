@@ -7,3 +7,6 @@
 [submodule "services/polban-dataview"]
 	path = services/polban-dataview
 	url = https://github.com/ihsan-ramadhan/polban-dataview
+[submodule "docs/polban-datacore-api-docs"]
+	path = docs/polban-datacore-api-docs
+	url = https://github.com/ikhsan3adi/polban-datacore-api-docs
