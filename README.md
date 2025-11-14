@@ -19,11 +19,19 @@ This superproject repository contains:
 
 ### Start
 
-Run the script:
+1. Copy `.env.example` to `.env`:
 
-```sh
-./run.sh
-```
+    ```sh
+    cp .env.example .env
+    ```
+
+    Make sure to edit the `.env` file with your own configurations.
+
+2. Run the script:
+
+    ```sh
+    ./run.sh
+    ```
 
 ### Stop
 
@@ -31,6 +39,14 @@ Run:
 
 ```sh
 docker compose down
+```
+
+### Update Submodules
+
+Run:
+
+```sh
+git submodule update --remote --merge services
 ```
 
 ## Authors

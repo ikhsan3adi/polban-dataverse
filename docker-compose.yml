@@ -73,10 +73,11 @@ services:
     container_name: dataverse-datacore
     image: dataverse-datacore
     build:
-      context: ./configs/polban-datacore
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./configs/polban-datacore/Dockerfile
       args:
         WORKDIR: ./services/polban-datacore/backend
+        CONFDIR: ./configs/polban-datacore
     depends_on:
       dataverse-datacore_db:
         condition: service_healthy
@@ -100,10 +101,11 @@ services:
     container_name: dataverse-datacore_web
     image: dataverse-datacore_web
     build:
-      context: ./configs/polban-datacore-web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./configs/polban-datacore-web/Dockerfile
       args:
         WORKDIR: ./services/polban-datacore/frontend
+        CONFDIR: ./configs/polban-datacore-web
     depends_on:
       - dataverse-datacore
     # TODO: Add environment variables for datacore_web
@@ -119,10 +121,11 @@ services:
     container_name: dataverse-datahub
     image: dataverse-datahub
     build:
-      context: ./configs/polban-datahub
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./configs/polban-datahub/Dockerfile
       args:
         WORKDIR: ./services/polban-datahub/datahub-backend
+        CONFDIR: ./configs/polban-datahub
     depends_on:
       dataverse-main_db:
         condition: service_healthy
@@ -143,10 +146,11 @@ services:
     container_name: dataverse-dataview
     image: dataverse-dataview
     build:
-      context: ./configs/polban-dataview
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./configs/polban-dataview/Dockerfile
       args:
         WORKDIR: ./services/polban-dataview/laravel-vue
+        CONFDIR: ./configs/polban-dataview
     depends_on:
       dataverse-main_db:
         condition: service_healthy
@@ -166,10 +170,31 @@ services:
       - dataverse-net
     restart: on-failure
 
+  dataverse_gateway_bootstrap:
+    container_name: dataverse_gateway_bootstrap
+    image: kong:3.9
+    depends_on:
+      dataverse-main_db:
+        condition: service_healthy
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: dataverse-main_db
+      KONG_PG_PORT: 5432
+      KONG_PG_USER: ${KONG_DB_USER}
+      KONG_PG_PASSWORD: ${KONG_DB_PASSWORD}
+      KONG_PG_DATABASE: ${KONG_DB_NAME}
+      KONG_PASSWORD: ${KONG_PASSWORD}
+    command: kong migrations bootstrap
+    networks:
+      - dataverse-net
+    restart: on-failure
+
   dataverse_gateway:
     container_name: dataverse_gateway
     image: kong:3.9
     depends_on:
+      dataverse_gateway_bootstrap:
+        condition: service_completed_successfully
       dataverse-main_db:
         condition: service_healthy
       dataverse-datacore:
@@ -183,19 +208,26 @@ services:
     volumes:
       - ./configs/kong.yml:/etc/kong/kong.yml
     environment:
+      # KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml # not used
+
       KONG_DATABASE: postgres
       KONG_PG_HOST: dataverse-main_db
       KONG_PG_PORT: 5432
       KONG_PG_USER: ${KONG_DB_USER}
       KONG_PG_PASSWORD: ${KONG_DB_PASSWORD}
       KONG_PG_DATABASE: ${KONG_DB_NAME}
-      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yml
-      KONG_PROXY_LISTEN: "0.0.0.0:8000"
-      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
       KONG_PASSWORD: ${KONG_PASSWORD}
+
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_LISTEN: 0.0.0.0:8002
+      KONG_ADMIN_GUI_PATH: /
+      KONG_ADMIN_GUI_URL: http://localhost:8087
+      KONG_ADMIN_GUI_API_URL: http://localhost:8086
     ports:
       - 8085:8000
       - 8086:8001
+      - 8087:8002
     networks:
       - dataverse-net
     restart: on-failure
