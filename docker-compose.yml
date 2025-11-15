@@ -132,6 +132,8 @@ services:
       dataverse-main_db:
         condition: service_healthy
     environment:
+      APP_KEY: ${DATAHUB_APP_KEY}
+      APP_URL: ${DATAHUB_APP_URL}
       DB_CONNECTION: pgsql
       DB_HOST: dataverse-main_db
       DB_PORT: 5432
@@ -159,6 +161,8 @@ services:
       dataverse-datacore:
         condition: service_started
     environment:
+      APP_KEY: ${DATAVIEW_APP_KEY}
+      APP_URL: ${DATAVIEW_APP_URL}
       DB_CONNECTION: pgsql
       DB_HOST: dataverse-main_db
       DB_PORT: 5432
@@ -221,16 +225,16 @@ services:
       KONG_PG_DATABASE: ${KONG_DB_NAME}
       KONG_PASSWORD: ${KONG_PASSWORD}
 
-      KONG_PROXY_LISTEN: 0.0.0.0:8000
-      KONG_ADMIN_LISTEN: 0.0.0.0:8001
-      KONG_ADMIN_GUI_LISTEN: 0.0.0.0:8002
+      KONG_PROXY_LISTEN: 0.0.0.0:${KONG_PROXY_PORT}
+      KONG_ADMIN_LISTEN: 0.0.0.0:${KONG_API_PORT}
+      KONG_ADMIN_GUI_LISTEN: 0.0.0.0:${KONG_GUI_PORT}
       KONG_ADMIN_GUI_PATH: /
       KONG_ADMIN_GUI_URL: ${KONG_GUI_URL_PUBLIC}
       KONG_ADMIN_GUI_API_URL: ${KONG_GUI_API_URL_PUBLIC}
     ports:
-      - ${KONG_PROXY_PORT_PUBLIC}:8000
-      - ${KONG_API_PORT_PUBLIC}:8001
-      - ${KONG_GUI_PORT_PUBLIC}:8002
+      - ${KONG_PROXY_PORT_PUBLIC}:${KONG_PROXY_PORT}
+      - ${KONG_API_PORT_PUBLIC}:${KONG_API_PORT}
+      - ${KONG_GUI_PORT_PUBLIC}:${KONG_GUI_PORT}
     networks:
       - dataverse-net
     restart: on-failure
