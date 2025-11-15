@@ -1,0 +1,178 @@
+_format_version: "3.0"
+services:
+- connect_timeout: 60000
+  enabled: true
+  host: dataverse-datacore
+  name: datacore-api
+  port: 3000
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - datacore.localhost
+    https_redirect_status_code: 426
+    methods:
+    - GET
+    - HEAD
+    name: datacore-api
+    path_handling: v0
+    paths:
+    - /api
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+    tags:
+    - api
+  tags:
+  - datacore
+  - nestjs
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: dataverse-datacore_web
+  name: datacore-web
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - datacore.localhost
+    https_redirect_status_code: 426
+    methods:
+    - GET
+    - PUT
+    - POST
+    - PATCH
+    - DELETE
+    - HEAD
+    name: datacore-web
+    path_handling: v0
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+    tags:
+    - web
+  tags:
+  - datacore
+  - vuejs
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: dataverse-datahub
+  name: datahub-api
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - datahub.localhost
+    https_redirect_status_code: 426
+    methods:
+    - GET
+    - HEAD
+    name: datahub-api
+    path_handling: v0
+    paths:
+    - /api
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: false
+    tags:
+    - api
+  tags:
+  - datahub
+  - laravel
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: dataverse-datahub
+  name: datahub-web
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - datahub.localhost
+    https_redirect_status_code: 426
+    methods:
+    - GET
+    - PUT
+    - POST
+    - PATCH
+    - DELETE
+    - OPTIONS
+    - HEAD
+    - CONNECT
+    - TRACE
+    name: datahub-web
+    path_handling: v0
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+    tags:
+    - web
+  tags:
+  - datahub
+  - laravel
+  - vuejs
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: dataverse-dataview
+  name: dataview-web
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - hosts:
+    - localhost
+    https_redirect_status_code: 426
+    methods:
+    - GET
+    - PUT
+    - POST
+    - PATCH
+    - DELETE
+    - HEAD
+    name: dataview-web
+    path_handling: v0
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+    tags:
+    - web
+  tags:
+  - dataview
+  - laravel
+  - vuejs
+  write_timeout: 60000
