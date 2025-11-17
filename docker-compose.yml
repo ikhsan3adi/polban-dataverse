@@ -84,6 +84,7 @@ services:
       dataverse-datacore_redis:
         condition: service_started
     environment:
+      NODE_ENV: ${DATACORE_NODE_ENV}
       HOST: 0.0.0.0
       PORT: 3000
       DATABASE_URL: postgresql://${DATACORE_DB_USER}:${DATACORE_DB_PASSWORD}@dataverse-datacore_db:5432/${DATACORE_DB_NAME}?schema=public
