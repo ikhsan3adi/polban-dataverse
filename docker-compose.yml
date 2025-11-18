@@ -90,8 +90,7 @@ services:
       DATABASE_URL: postgresql://${DATACORE_DB_USER}:${DATACORE_DB_PASSWORD}@dataverse-datacore_db:5432/${DATACORE_DB_NAME}?schema=public
       REDIS_HOST: dataverse-datacore_redis
       REDIS_PORT: 6379
-      DATAHUB_API_URL: dataverse-datahub
-      DATAHUB_API_PORT: 80
+      DATAHUB_URL: http://dataverse-datahub
     expose:
       - 3000
     # ports:
