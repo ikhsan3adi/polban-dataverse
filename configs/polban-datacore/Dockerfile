@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ${WORKDIR}/package.json ${WORKDIR}/bun.lockb* ./
+COPY ${WORKDIR}/package.json ${WORKDIR}/bun.lock ./ ${WORKDIR}/bun.lockb* ./
 
 RUN bun install --frozen-lockfile
 
@@ -21,8 +21,6 @@ RUN bun run build
 FROM oven/bun:1.3-slim
 
 WORKDIR /app
-
-ENV NODE_ENV=production
 
 COPY --from=builder /app .
 

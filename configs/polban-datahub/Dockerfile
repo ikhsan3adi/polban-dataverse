@@ -11,9 +11,10 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install pdo pdo_pgsql bcmath zip
+RUN docker-php-ext-install pdo pdo_pgsql bcmath zip gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
