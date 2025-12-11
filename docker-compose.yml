@@ -91,6 +91,8 @@ services:
       REDIS_HOST: dataverse-datacore_redis
       REDIS_PORT: 6379
       DATAHUB_URL: http://dataverse-datahub
+      DATACORE_SYSTEM_EMAIL: ${DATACORE_SYSTEM_EMAIL}
+      DATACORE_SYSTEM_PASSWORD: ${DATACORE_SYSTEM_PASSWORD}
     expose:
       - 3000
     # ports:
