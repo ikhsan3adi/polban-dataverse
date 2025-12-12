@@ -24,4 +24,4 @@ WORKDIR /app
 
 COPY --from=builder /app .
 
-CMD ["bun", "run", "start:prod"]
+CMD ["sh", "-c", "bun run db:migrate && bun run start:prod"]
