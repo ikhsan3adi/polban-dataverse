@@ -20,9 +20,9 @@ services:
       POSTGRES_DB: ${DATAHUB_DB_NAME}
 
       # second db for dataview
-      DATAVIEW_DB_USER: ${DATAVIEW_DB_USER}
-      DATAVIEW_DB_PASSWORD: ${DATAVIEW_DB_PASSWORD}
-      DATAVIEW_DB_NAME: ${DATAVIEW_DB_NAME}
+      # DATAVIEW_DB_USER: ${DATAVIEW_DB_USER}
+      # DATAVIEW_DB_PASSWORD: ${DATAVIEW_DB_PASSWORD}
+      # DATAVIEW_DB_NAME: ${DATAVIEW_DB_NAME}
 
       # db for kong
       KONG_DB_USER: ${KONG_DB_USER}
@@ -112,9 +112,10 @@ services:
         CONFDIR: ./configs/polban-datacore-web
     depends_on:
       - dataverse-datacore
-    # TODO: Add environment variables for datacore_web
     environment:
-      DATACORE_API_URL: dataverse-datacore:3000
+      VITE_API_BASE_URL: dataverse-datacore:3000
+      VITE_APP_TITLE: ${DATACORE_WEB_APP_TITLE}
+      VITE_APP_VERSION: ${DATACORE_APP_VERSION}
     # ports:
     #   - 3001:80
     networks:
@@ -158,19 +159,18 @@ services:
         WORKDIR: ./services/polban-dataview/laravel-vue
         CONFDIR: ./configs/polban-dataview
     depends_on:
-      dataverse-main_db:
-        condition: service_healthy
       dataverse-datacore:
         condition: service_started
     environment:
       APP_KEY: ${DATAVIEW_APP_KEY}
       APP_URL: ${DATAVIEW_APP_URL}
-      DB_CONNECTION: pgsql
-      DB_HOST: dataverse-main_db
-      DB_PORT: 5432
-      DB_DATABASE: ${DATAVIEW_DB_NAME}
-      DB_USERNAME: ${DATAVIEW_DB_USER}
-      DB_PASSWORD: ${DATAVIEW_DB_PASSWORD}
+      DB_CONNECTION: none
+      # DB_HOST: dataverse-main_db
+      # DB_PORT: 5432
+      # DB_DATABASE: ${DATAVIEW_DB_NAME}
+      # DB_USERNAME: ${DATAVIEW_DB_USER}
+      # DB_PASSWORD: ${DATAVIEW_DB_PASSWORD}
+      SESSION_DRIVER: array
       DATACORE_API_URL: dataverse-datacore:3000
     # ports:
     #   - 3003:80
