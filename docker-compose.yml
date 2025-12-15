@@ -116,6 +116,7 @@ services:
       VITE_API_BASE_URL: dataverse-datacore:3000
       VITE_APP_TITLE: ${DATACORE_WEB_APP_TITLE}
       VITE_APP_VERSION: ${DATACORE_APP_VERSION}
+      VITE_API_DOCS_URL: ${DATACORE_API_DOCS_URL}
     # ports:
     #   - 3001:80
     networks:
@@ -131,12 +132,14 @@ services:
       args:
         WORKDIR: ./services/polban-datahub/datahub-backend
         CONFDIR: ./configs/polban-datahub
+        API_BASE_URL: ${DATAHUB_API_BASE_URL}
     depends_on:
       dataverse-main_db:
         condition: service_healthy
     environment:
       APP_KEY: ${DATAHUB_APP_KEY}
       APP_URL: ${DATAHUB_APP_URL}
+      VITE_API_BASE_URL: ${DATAHUB_API_BASE_URL}
       DB_CONNECTION: pgsql
       DB_HOST: dataverse-main_db
       DB_PORT: 5432
@@ -158,6 +161,7 @@ services:
       args:
         WORKDIR: ./services/polban-dataview/laravel-vue
         CONFDIR: ./configs/polban-dataview
+        API_BASE_URL: ${DATACORE_BASE_URL}
     depends_on:
       dataverse-datacore:
         condition: service_started
@@ -171,7 +175,8 @@ services:
       # DB_USERNAME: ${DATAVIEW_DB_USER}
       # DB_PASSWORD: ${DATAVIEW_DB_PASSWORD}
       SESSION_DRIVER: array
-      DATACORE_API_URL: dataverse-datacore:3000
+      API_BASE_URL: ${DATACORE_BASE_URL}
+      VITE_API_BASE_URL: ${DATACORE_BASE_URL}
     # ports:
     #   - 3003:80
     networks:

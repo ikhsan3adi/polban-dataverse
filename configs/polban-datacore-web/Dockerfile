@@ -4,7 +4,7 @@ ARG WORKDIR
 
 WORKDIR /app
 
-COPY ${WORKDIR}/package.json ${WORKDIR}/bun.lockb* ./
+COPY ${WORKDIR}/package.json ${WORKDIR}/bun.lock ${WORKDIR}/bun.lockb* ./
 
 RUN bun install --frozen-lockfile
 

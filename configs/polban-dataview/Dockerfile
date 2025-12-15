@@ -21,9 +21,6 @@ RUN a2enmod rewrite
 
 COPY ${CONFDIR}/apache-config.conf /etc/apache2/sites-available/000-default.conf
 
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-RUN apt-get install -y nodejs
-
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
@@ -37,6 +34,10 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev --no-script
 COPY ${WORKDIR} .
 
 RUN composer run-script post-autoload-dump --no-dev
+
+ARG API_BASE_URL
+
+ENV VITE_API_BASE_URL=${API_BASE_URL}
 
 RUN bun install
 RUN bun run build
